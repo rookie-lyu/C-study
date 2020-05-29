@@ -32,7 +32,7 @@ int numTrees(int n)
 }
 ```
 
-##### 5.29 64 94
+##### 5.29 64 94 19
 
 ```c++
 int minPathSum(vector<vector<int>>& grid) 
@@ -87,3 +87,31 @@ vector<int> inorderTraversal(TreeNode* root) {
     }
 ```
 
+19.给定一个链表，删除链表的倒数第 *n* 个节点，并且返回链表的头结点。
+
+```C++
+ ListNode* removeNthFromEnd(ListNode* head, int n)
+    {
+        if(head==NULL)
+        return NULL;
+        ListNode* dummy=new ListNode(NULL);
+        dummy->next=head;
+        ListNode *slow =dummy;
+        ListNode  *fast=dummy;
+        for(int i=1;i<=n;i++)
+        fast=fast->next;
+        while(fast->next!=NULL)
+        {
+            fast=fast->next;
+            slow=slow->next;
+        }
+        
+       slow->next=slow->next->next;
+
+    return dummy->next;
+    }
+```
+
+
+
+<span style='color:red;'>设置头结点要不会出现溢出</span>
