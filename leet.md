@@ -115,3 +115,50 @@ vector<int> inorderTraversal(TreeNode* root) {
 
 
 <span style='color:red;'>设置头结点要不会出现溢出</span>
+
+##### 5.31 226 23
+
+```C++
+TreeNode* invertTree(TreeNode* root) {
+        if(root==NULL)
+        return NULL;
+        TreeNode* tmp=root->left;
+        root->left=root->right;
+        root->right=tmp;
+        if(root->left)
+        invertTree(root->left);
+        if(root->right)
+        invertTree(root->right);
+        return root;
+    }
+```
+
+```c++
+struct cmp{  
+       bool operator()(ListNode *a,ListNode *b){
+          return a->val > b->val;}
+       };
+//priority_queue自定义函数的比较与sort正好是相反的，也就是说，如果你是把大于号作为第一关键字的比较方式，那么堆顶的元素就是第一关键字最小的
+
+
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+          priority_queue<ListNode*, vector<ListNode*>, cmp> pri_queue;
+        // 建立大小为k的小根堆
+        for(auto elem : lists){
+            if(elem) pri_queue.push(elem);
+        }
+        // 可以使用哑节点/哨兵节点
+        ListNode dummy(-1);
+        ListNode* p = &dummy;
+        // 开始出队
+        while(!pri_queue.empty()){
+            ListNode* top = pri_queue.top(); pri_queue.pop();
+            p->next = top; p = top;
+            if(top->next) pri_queue.push(top->next);
+        }
+        return dummy.next; 
+
+
+    }
+```
+
