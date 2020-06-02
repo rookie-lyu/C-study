@@ -303,7 +303,8 @@ https://leetcode-cn.com/problems/trapping-rain-water/solution/shuang-zhi-zhen-an
         int m=max_element(height.begin(),height.end())-height.begin();
         //遍历最大值左边
         int res=0,cur=height[0];
-        for(int i=1;i<m;i++)
+        for(int i=1;
+            <m;i++)
         {
             if(height[i]<cur)
                 res+=cur-height[i];
@@ -321,5 +322,93 @@ https://leetcode-cn.com/problems/trapping-rain-water/solution/shuang-zhi-zhen-an
         }
         return res;
     }
+```
+
+##### 6.2 46
+
+给定一个 **没有重复** 数字的序列，返回其所有可能的全排列。
+
+```
+输入: [1,2,3]
+输出:
+[
+  [1,2,3],
+  [1,3,2],
+  [2,1,3],
+  [2,3,1],
+  [3,1,2],
+  [3,2,1]
+]
+```
+
+```C++
+ vector<vector<int>> permute(vector<int>& nums) 
+    {
+        vector<vector<int>> result;
+        permute(nums, result, 0);
+        return result;
+    }
+    void permute(vector<int> & nums, vector<vector<int>> & result, int i){
+        if(i == nums.size())
+        {
+            result.push_back(nums); 
+            return;
+        }
+        for(int j = i; j<nums.size(); j++){
+            if(i!=j) swap(nums[i], nums[j]);
+            permute(nums, result, i+1);
+            if(i!=j) swap(nums[i], nums[j]);
+        }
+    }
+```
+
+48给定一个 n × n 的二维矩阵表示一个图像。
+
+将图像顺时针旋转 90 度。
+
+说明：
+
+你必须在原地旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要使用另一个矩阵来旋转图像。
+
+```C++
+void rotate(vector<vector<int>>& matrix) {
+        int n=matrix.size();
+        
+        //进行对角线变换
+         for(int i=0;i<n;i++)
+         {
+             for(int j=i;j<n;j++)
+             {
+                 swap(matrix[i][j],matrix[j][i]);
+             }
+         }
+
+        //沿着竖轴翻转
+        for(int i=0;i<n;i++)
+        {
+            reverse(matrix[i].begin(),matrix[i].end());
+        }
+    }
+```
+
+49给定一个字符串数组，将字母异位词组合在一起。字母异位词指字母相同，但排列不同的字符串。
+
+```C++
+vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        
+        vector<vector<string>>ans;
+        unordered_map<string,vector<string>>mp;
+        for(int i=0;i<strs.size();i++)
+        {
+            string tmp=strs[i];
+            sort(tmp.begin(),tmp.end());
+           mp[tmp].push_back(strs[i]);
+        }
+        for(auto at:mp)
+        ans.push_back(at.second);
+        return ans;
+
+    }
+  
 ```
 
