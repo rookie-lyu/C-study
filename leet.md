@@ -284,7 +284,7 @@ struct cmp{
         ListNode* p = &dummy;
         // 开始出队
         while(!pri_queue.empty()){
-            ListNode* top = pri_queue.top(); pri_queue.pop();
+            ListNode* top = pri_queue.top();pri_queue.pop();
             p->next = top; p = top;
             if(top->next) pri_queue.push(top->next);
         }
