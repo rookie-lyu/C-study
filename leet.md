@@ -663,8 +663,75 @@ vector<vector<int>> subsets(vector<int>& nums) {
         {
             tmp.push_back(nums[i]);
             dfs(ans,tmp,nums,i+1);
-            tmp.pop_back();
+            tmp.pop_back;
         }
+    }
+```
+
+##### 6.8 104 105
+
+给定一个二叉树，找出其最大深度。二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+
+**说明:** 叶子节点是指没有子节点的节点。
+
+```C++
+//层序遍历
+int maxDepth(TreeNode* root) {
+         if(root==NULL)
+         return 0;
+         int ans=0;
+         queue<TreeNode*>que;
+         que.push(root);
+         while(!que.empty())
+         {
+             ans+=1;
+             int num=que.size();
+             for(int i=0;i<num;i++)
+             {
+                 TreeNode* top=que.front();
+                 que.pop();
+                 if(top->left)
+                 que.push(top->left);
+                 if(top->right)
+                 que.push(top->right);
+
+             }
+         }
+         return ans;
+    }
+```
+
+105
+
+```C++
+ TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+          int n = preorder.size();
+        int m = inorder.size();
+        if(n!=m || n == 0)
+            return NULL;
+        return construct(preorder, inorder, 0, n-1, 0, m-1);
+    }
+    TreeNode* construct(vector<int>& pre, vector<int>& vin, int l1, int r1, int l2, int r2)
+    {
+        TreeNode* root = new TreeNode(pre[l1]);
+        if(r1 == l1)
+        {
+            return root;
+        }
+        int val = pre[l1];
+        int index;
+        for(index = l2; index <= r2; index ++)
+        {
+            if(vin[index] == val)
+                break;
+        }
+        int left_tree_len  = index - l2;
+        int right_tree_len = r2 - index;
+        if(left_tree_len > 0)
+            root->left = construct(pre, vin, l1+1, l1+left_tree_len, l2, index-1);
+        if(right_tree_len >0 )
+            root->right = construct(pre, vin, l1+1+left_tree_len, r1, index+1, r2);
+        return root;
     }
 ```
 
