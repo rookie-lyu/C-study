@@ -735,3 +735,69 @@ int maxDepth(TreeNode* root) {
     }
 ```
 
+##### 6.9 面试46 25
+
+给定一个数字，我们按照如下规则把它翻译为字符串：0 翻译成 “a” ，1 翻译成 “b”，……，11 翻译成 “l”，……，25 翻译成 “z”。一个数字可能有多个翻译。请编程实现一个函数，用来计算一个数字有多少种不同的翻译方法。
+
+ 
+
+```
+输入: 12258
+输出: 5
+解释: 12258有5种不同的翻译，分别是"bccfi", "bwfi", "bczi", "mcfi"和"mzi"
+```
+
+tips：看i前面两个数能组成几种结构，如0X或者26以上只有一种解释方法，对应的解释为aX或数分开解释，在10~25有两种解释 合并算一个或者分开翻译
+
+```C++
+int translateNum(int num) {
+    string value=to_string(num);
+    vector<int> dp(value.size()+1, 0);
+    dp[0]=1;dp[1]=1;
+    for(int i=2;i<=value.size();i++)
+    {
+       if (value[i - 2] != '0' && 10 * (value[i - 2] - '0') + value[i - 1] - '0' < 26) 
+         dp[i] = dp[i-1]+dp[i - 2];
+        else
+         dp[i] = dp[i-1];
+    }
+       return dp[value.size()];
+    }
+```
+
+```
+ListNode* reverseList(ListNode* head, ListNode* tail) {
+    ListNode* pPrev = tail;
+    ListNode* pCurr = head;
+    while (pCurr != tail) {
+        ListNode* pNext = pCurr->next;
+        pCurr->next = pPrev;
+        pPrev = pCurr;
+        pCurr = pNext;
+    }
+    return pPrev;
+}
+
+ListNode* reverseKGroup(ListNode* head, int k)
+{
+    ListNode* dummy = new ListNode(0);
+    dummy->next = head;
+    ListNode* pPrev = dummy;
+    ListNode* pCurr = head;
+    while (pCurr != nullptr) {
+        int i = 0;
+        while (i++ < k && pCurr != nullptr) {
+            pCurr = pCurr->next;
+        }
+        if (i != k + 1) break;
+
+        ListNode* pTemp = pPrev->next;
+        pPrev->next = reverseList(pTemp, pCurr);
+        pPrev = pTemp;
+    }
+    return dummy->next;
+}
+
+。
+```
+
