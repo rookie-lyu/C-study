@@ -801,3 +801,223 @@ ListNode* reverseKGroup(ListNode* head, int k)
 。
 ```
 
+##### 6.11  79 98
+
+79给定一个二维网格和一个单词，找出该单词是否存在于网格中。
+
+单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母不允许被重复使用。
+
+```
+board =
+[
+  ['A','B','C','E'],
+  ['S','F','C','S'],
+  ['A','D','E','E']
+]
+
+给定 word = "ABCCED", 返回 true
+给定 word = "SEE", 返回 true
+给定 word = "ABCB", 返回 false
+```
+
+
+
+```C++
+bool exist(vector<vector<char>>& board, string word) {
+        if(board.size()==0)
+        return false;
+        for(int i=0;i<board.size();i++)
+        {
+            for(int j=0;j<board[0].size();j++)
+            {
+                if(dfs(board,word,i,j,0))
+                return true;
+            }
+        }
+        return false;
+    }
+   bool dfs(vector<vector<char>>& board, string word,int i,int j,int len)
+   {
+       if(i>=board.size()||j>=board[0].size()||i<0||j<0||board[i]					  [j]!=word[len]||len>=word.size())
+       {
+           return false;
+       }
+       if(board[i][j]==word[len]&&len==word.size()-1)
+       {
+           return true;
+       }
+       char tmp=board[i][j];
+       board[i][j]='0';
+       bool ans=dfs(board,word,i+1,j,len+1)||dfs(board,word,i-1,j,len+1)||dfs(board,word,i,j+1,len+1)||dfs              (board,word,i,j-1,len+1);
+        board[i][j]=tmp;
+        return ans;
+   }
+```
+
+98给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+
+假设一个二叉搜索树具有如下特征：
+
+节点的左子树只包含小于当前节点的数。
+节点的右子树只包含大于当前节点的数。
+所有左子树和右子树自身必须也是二叉搜索树。
+
+tips：二叉搜索树中序遍历是单调递增的，所以先中序后判断即可
+
+```C++
+bool isValidBST(TreeNode* root) {
+        if(root==NULL)
+        return true;
+        vector<int>ans;
+        inorder(root,ans);
+        for(int i=1;i<ans.size();i++)
+        {
+            if(ans[i]<=ans[i-1])
+            return false;
+        }
+        return true;
+        
+    }
+    void inorder(TreeNode* root,vector<int>&ans)
+    {
+        
+        if(root!=NULL)
+        {
+            inorder(root->left,ans);
+            ans.push_back(root->val);
+            inorder(root->right,ans);
+        }
+    }
+```
+
+##### 6.12  739 15
+
+请根据每日 气温 列表，重新生成一个列表。对应位置的输出为：要想观测到更高的气温，至少需要等待的天数。如果气温在这之后都不会升高，请在该位置用 0 来代替。
+
+例如，给定一个列表 temperatures = [73, 74, 75, 71, 69, 72, 76, 73]，你的输出应该是 [1, 1, 4, 2, 1, 1, 0, 0]。
+
+提示：气温 列表长度的范围是 [1, 30000]。每个气温的值的均为华氏度，都是在 [30, 100] 范围内的整数。
+
+```
+tips可以维护一个存储下标的单调栈，从栈底到栈顶的下标对应的温度列表中的温度依次递减。如果一个下标在单调栈里，则表示尚未找到下一次温度更高的下标。
+
+正向遍历温度列表。对于温度列表中的每个元素 T[i]，如果栈为空，则直接将 i 进栈，如果栈不为空，则比较栈顶元素 prevIndex 对应的温度 T[prevIndex] 和当前温度 T[i]，如果 T[i] > T[prevIndex]，则将 prevIndex 移除，并将 prevIndex 对应的等待天数赋为 i - prevIndex，重复上述操作直到栈为空或者栈顶元素对应的温度小于等于当前温度，然后将 i 进栈。
+
+为什么可以在弹栈的时候更新 ans[prevIndex] 呢？因为在这种情况下，即将进栈的 i 对应的 T[i] 一定是 T[prevIndex] 右边第一个比它大的元素，试想如果 prevIndex 和 i 有比它大的元素，假设下标为 j，那么 prevIndex 一定会在下标 j 的那一轮被弹掉。
+
+由于单调栈满足从栈底到栈顶元素对应的温度递减，因此每次有元素进栈时，会将温度更低的元素全部移除，并更新出栈元素对应的等待天数，这样可以确保等待天数一定是最小的。
+
+以下用一个具体的例子帮助读者理解单调栈。对于温度列表 [73,74,75,71,69,72,76,73][73,74,75,71,69,72,76,73]，单调栈stack 的初始状态为空，答案 ans 的初始状态是 [0,0,0,0,0,0,0,0][0,0,0,0,0,0,0,0]，按照以下步骤更新单调栈和答案，其中单调栈内的元素都是下标，括号内的数字表示下标在温度列表中对应的温度。
+
+当 i=0i=0 时，单调栈为空，因此将 00 进栈。
+
+stack=[0(73)]
+
+ans=[0,0,0,0,0,0,0,0]
+
+当 i=1i=1 时，由于 7474 大于 7373，因此移除栈顶元素 00，赋值 ans[0]:=1-0ans[0]:=1−0，将 11 进栈。
+
+\textit{stack}=[1(74)]stack=[1(74)]
+
+\textit{ans}=[1,0,0,0,0,0,0,0]ans=[1,0,0,0,0,0,0,0]
+
+当 i=2i=2 时，由于 7575 大于 7474，因此移除栈顶元素 11，赋值 ans[1]:=2-1ans[1]:=2−1，将 22 进栈。
+
+\textit{stack}=[2(75)]stack=[2(75)]
+
+\textit{ans}=[1,1,0,0,0,0,0,0]ans=[1,1,0,0,0,0,0,0]
+
+当 i=3i=3 时，由于 7171 小于 7575，因此将 33 进栈。
+
+\textit{stack}=[2(75),3(71)]stack=[2(75),3(71)]
+
+\textit{ans}=[1,1,0,0,0,0,0,0]ans=[1,1,0,0,0,0,0,0]
+
+当 i=4i=4 时，由于 6969 小于 7171，因此将 44 进栈。
+
+\textit{stack}=[2(75),3(71),4(69)]stack=[2(75),3(71),4(69)]
+
+\textit{ans}=[1,1,0,0,0,0,0,0]ans=[1,1,0,0,0,0,0,0]
+
+当 i=5i=5 时，由于 7272 大于 6969 和 7171，因此依次移除栈顶元素 44 和 33，赋值 ans[4]:=5-4ans[4]:=5−4 和 ans[3]:=5-3ans[3]:=5−3，将 55 进栈。
+
+\textit{stack}=[2(75),5(72)]stack=[2(75),5(72)]
+
+\textit{ans}=[1,1,0,2,1,0,0,0]ans=[1,1,0,2,1,0,0,0]
+
+当 i=6i=6 时，由于 7676 大于 7272 和 7575，因此依次移除栈顶元素 55 和 22，赋值 ans[5]:=6-5ans[5]:=6−5 和 ans[2]:=6-2ans[2]:=6−2，将 66 进栈。
+
+\textit{stack}=[6(76)]stack=[6(76)]
+
+\textit{ans}=[1,1,4,2,1,1,0,0]ans=[1,1,4,2,1,1,0,0]
+
+当 i=7i=7 时，由于 7373 小于 7676，因此将 77 进栈。
+
+\textit{stack}=[6(76),7(73)]stack=[6(76),7(73)]
+
+\textit{ans}=[1,1,4,2,1,1,0,0]ans=[1,1,4,2,1,1,0,0]
+
+JavaPython3C++Golang
+
+
+作者：LeetCode-Solution
+链接：https://leetcode-cn.com/problems/daily-temperatures/solution/mei-ri-wen-du-by-leetcode-solution/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+
+
+```C++
+ vector<int> dailyTemperatures(vector<int>& T) {
+        int num=T.size();
+         vector<int>ans(num,0);
+        stack<int>stk;
+        for(int i=0;i<num;i++)
+        {
+            while(!stk.empty()&&T[i]>T[stk.top()])
+            {
+                int pre=stk.top();
+                ans[pre]=i-pre;
+                stk.pop();
+            }
+            stk.push(i);
+        }
+        return ans;
+    }
+```
+
+15 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有满足条件且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+
+
+
+```C++
+vector<vector<int>> threeSum(vector<int>& nums) 
+    {
+        sort(nums.begin(),nums.end());
+        vector<vector<int>> ret;
+        int n = nums.size(),start = 0,l,r;
+        while(start<n){
+            if(nums[start]>0)break;
+            if(start&&nums[start]==nums[start-1]){start++;continue;}
+            l=start+1;
+            r = n-1;
+            while(l<r){
+                int t =nums[start]+nums[l]+nums[r];
+                if(!t){
+                    ret.push_back({nums[start],nums[l],nums[r]});
+                    while (l<r && nums[l] == nums[l+1]) l++; // 去重
+                    while (l<r && nums[r] == nums[r-1]) r--; // 去重
+                    r--;l++;
+                }
+                else if(t>0){r--;}
+                else if(t<0){l++;}
+            }
+            start++;
+        }
+        return ret;
+    }
+```
+
