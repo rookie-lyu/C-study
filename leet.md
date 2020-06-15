@@ -1021,3 +1021,76 @@ vector<vector<int>> threeSum(vector<int>& nums)
     }
 ```
 
+##### 6.15 69 14 84
+
+实现 int sqrt(int x) 函数。
+
+计算并返回 x 的平方根，其中 x 是非负整数。
+
+由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。
+
+```C++
+int mySqrt(int x) {
+        double l=1,r=x;
+        while(r-l>1e-7)
+        {
+            double mid=(l+r)/2;
+            if((mid*mid)>=x)r=mid;
+            else
+            l=mid;
+        }
+        return (int)r;
+    }
+```
+
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 `""`。
+
+```C++
+string longestCommonPrefix(vector<string>& strs) {
+        if(strs.empty())
+        return "";
+        int count=strs[0].size();
+        int num=strs.size();
+        for(int i=0;i<count;i++)
+        {
+            char tmp=strs[0][i];
+            for(int j=1;j<num;j++)
+            {
+                if(i==strs[j].size()||tmp!=strs[j][i])
+                {
+                    return strs[0].substr(0,i);
+                }
+            }
+        }
+        return strs[0];
+    }
+```
+
+84 给定 *n* 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+```C++
+int largestRectangleArea(vector<int>& heights) {
+       int ans=0;
+       stack<int> stk;
+       heights.push_back(0);
+       for(int i=0;i<heights.size();i++)
+       {
+           while(!stk.empty()&&heights[i]<heights[stk.top()])
+           {
+                int h=stk.top();
+                stk.pop();
+                 if(stk.empty())
+                 ans=max(ans,i*heights[h]);
+                 else
+                 ans=max(ans,(i-stk.top()-1)*heights[h]);
+           }
+           stk.push(i);
+       }
+       return ans;
+    }
+```
+
