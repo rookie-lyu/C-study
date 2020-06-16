@@ -1094,3 +1094,103 @@ int largestRectangleArea(vector<int>& heights) {
     }
 ```
 
+##### 6.16 139 28 45
+
+139给定一个**非空**字符串 *s* 和一个包含**非空**单词列表的字典 *wordDict*，判定 *s* 是否可以被空格拆分为一个或多个在字典中出现的单词。
+
+tips：可采用动态规划只要前边是可以由dic组成那么只需要判断后面的即可
+
+```C++
+bool wordBreak(string s, vector<string>& wordDict) {
+        if(s.empty()||wordDict.empty())
+        return false;
+        int n=s.size();
+        vector<bool>dp(n+1,false);
+        dp[0]=true;
+        for(int r=1;r<=n;r++)
+        {
+            for(int l=0;l<r;l++)
+            {
+                if(dp[l]&&find(wordDict.begin(),wordDict.end(),s.substr(l,r-l))!=wordDict.end())
+                {
+                    dp[r]=true;
+                    break;
+                }
+            }
+        }
+        return dp[n];
+    }
+```
+
+28实现 strStr() 函数。
+
+给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。
+
+
+
+```C++
+ int strStr(string haystack, string needle) {
+    int n,n1,start=0;   
+    n=haystack.size();
+    n1=needle.size();
+    if(n1==0)
+        return 0;
+    if(n<n1)
+        return -1;    
+    for(int i=0;i<n;++i)
+    {
+        if(needle[0]==haystack[i] && (n-i)>=n1)  
+        {
+            int count=0;     
+            start=i;
+            int tmp=i;                   
+            for(int j=0;j<n1;++j,++tmp)
+            {
+                if(needle[j]==haystack[tmp])
+                {
+                    ++count;   
+                        
+                }
+                else
+                break;
+            }
+            if(count==n1) 
+                return start;
+        }     
+    }
+    return -1;
+}
+
+```
+
+45	给定一个非负整数数组，你最初位于数组的第一个位置。数组中的每个元素代表你在该位置可以跳跃的最大长度。你的目标是使用最少的跳跃次数到达数组的最后一个位置。
+
+```
+输入: [2,3,1,1,4]
+输出: 2
+解释: 跳到最后一个位置的最小跳跃数是 2。
+     从下标为 0 跳到下标为 1 的位置，跳 1 步，然后跳 3 步到达数组的最后一个位置。
+
+```
+
+```C++
+ int jump(vector<int>& nums) {
+        int ans=0;
+        int start=0;
+        int end=1;
+        while(end<nums.size())
+        {
+            int maxPos = 0;
+            for (int i = start; i < end; i++)
+            {
+            // 能跳到最远的距离
+                maxPos = max(maxPos, i + nums[i]);
+            }
+            start = end;      // 下一次起跳点范围开始的格子
+            end = maxPos + 1; // 下一次起跳点范围结束的格子
+            ans++;            // 跳跃次数
+        }
+        return ans;
+    }
+```
+
